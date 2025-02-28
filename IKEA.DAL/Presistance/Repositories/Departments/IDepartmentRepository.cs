@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IKEA.DAL.Presistance.Repositories.Departments
 {
-    internal interface IDepartmentRepository
+    public interface IDepartmentRepository
     {
         IEnumerable<Department> GetAll(bool WithNoTracking = true);
         Department? GetById(int id);
