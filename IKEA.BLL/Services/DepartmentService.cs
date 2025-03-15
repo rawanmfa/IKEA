@@ -74,6 +74,7 @@ namespace IKEA.BLL.Services
         {
             var updatedDapartment = new Department()
             {
+                Id= departmentDTO.Id,
                 Code = departmentDTO.Code,
                 Name = departmentDTO.Name,
                 Description = departmentDTO.Description,

@@ -4,6 +4,7 @@ using IKEA.DAL.Presistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IKEA.DAL.Presistance.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250315003935_AddRelationOneToManyBtwEandD")]
+    partial class AddRelationOneToManyBtwEandD
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,18 +62,11 @@ namespace IKEA.DAL.Presistance.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasComputedColumnSql("GETDATE()");
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ManagerId")
-                        .IsUnique()
-                        .HasFilter("[ManagerId] IS NOT NULL");
 
                     b.ToTable("Departments");
                 });
@@ -143,15 +139,6 @@ namespace IKEA.DAL.Presistance.Data.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("IKEA.DAL.Models.Departments.Department", b =>
-                {
-                    b.HasOne("IKEA.DAL.Models.Employees.Employee", "Manager")
-                        .WithOne("ManageDepartment")
-                        .HasForeignKey("IKEA.DAL.Models.Departments.Department", "ManagerId");
-
-                    b.Navigation("Manager");
-                });
-
             modelBuilder.Entity("IKEA.DAL.Models.Employees.Employee", b =>
                 {
                     b.HasOne("IKEA.DAL.Models.Departments.Department", "Department")
@@ -164,11 +151,6 @@ namespace IKEA.DAL.Presistance.Data.Migrations
             modelBuilder.Entity("IKEA.DAL.Models.Departments.Department", b =>
                 {
                     b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("IKEA.DAL.Models.Employees.Employee", b =>
-                {
-                    b.Navigation("ManageDepartment");
                 });
 #pragma warning restore 612, 618
         }

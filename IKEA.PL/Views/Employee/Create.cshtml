@@ -1,0 +1,17 @@
+﻿@model CreatedEmployeeDto
+
+@{
+    ViewData["Title"] = "Employees";
+    ViewBag.Action = "Create";
+
+}
+<h1 class="col-6 my-4">Create New Employee</h1>
+<div class="row justify-content-center align-items-center flex-column">
+    <partial name="Partials/CreateEditEmployeePartial" />
+</div>
+
+@section ValidationScribts
+{
+    <partial name="_ValidationScriptsPartial"/>
+}
+

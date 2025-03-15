@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IKEA.DAL.Presistance.Repositories.Employees
 {
-    internal class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepositories
+    public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepositories
     {
         public EmployeeRepository(ApplicationDbContext context) : base(context) { } // Ask clr for object from ApplicationDbContext Implicitily
     }
