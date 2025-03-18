@@ -31,7 +31,7 @@ namespace IKEA.BLL.Models.Employees
         public DateTime CreatedOn { get; set; }
         public int LastModificationBy { get; set; }
         public DateTime LastModificationOn { get; set; }
-        //public string? Department { get; set; }
+        public string? Department { get; set; }
 
     }
 }

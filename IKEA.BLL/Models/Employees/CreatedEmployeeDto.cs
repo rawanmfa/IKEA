@@ -28,6 +28,7 @@ namespace IKEA.BLL.Models.Employees
         public DateTime HirringDate { get; set; }
         public Gender Gender { get; set; }
         public EmployeeType EmployeeType { get; set; }
-        //public int? DepartmentId { get; set; }
+        [Display(Name ="Department")]
+        public int? DepartmentId { get; set; }
     }
 }

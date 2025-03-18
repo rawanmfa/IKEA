@@ -15,15 +15,17 @@ namespace IKEA.DAL.Models.Departments
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
         public DateOnly CreationDate { get; set; }
+        #region Employee
         #region Work
         [InverseProperty(nameof(Models.Employees.Employee.Department))]
-        public ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
+        public virtual ICollection<Employee> Employees { get; set; } = new HashSet<Employee>();
         #endregion
         #region Manage
         [ForeignKey(nameof(Manager))]
         public int? ManagerId { get; set; }
         [InverseProperty(nameof(Models.Employees.Employee.ManageDepartment))]
-        public Employee? Manager { get; set; }
+        public virtual Employee? Manager { get; set; }
+        #endregion
         #endregion
     }
 }

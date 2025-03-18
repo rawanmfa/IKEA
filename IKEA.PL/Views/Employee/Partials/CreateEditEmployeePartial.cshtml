@@ -1,4 +1,9 @@
 ﻿@model UpdatedEmployeeDto
+@inject IDepartmentService departmentServices
+
+@{
+    var Departments = new SelectList(departmentServices.GetAllDepartments(), nameof(DepartmentDetailsToReturnDTO.Id), nameof(DepartmentDetailsToReturnDTO.Name));
+}
 
 <form asp-action="@ViewBag.Action" class="row col-6">
 
@@ -24,12 +29,22 @@
         <input asp-for="Age" class="form-control mb-3" />
         <span asp-validation-for="Age" class="text-danger"></span>
     </div>
-    @* <div class="form-group col-6">
+    <div class="form-group col-6">
+        <label class="form-label" asp-for="Salary"></label>
+        <input asp-for="Salary" class="form-control mb-3" />
+        <span asp-validation-for="Salary" class="text-danger"></span>
+    </div>
+    <div class="form-group col-6">
     <label class="form-label" asp-for="PhoneNumber"></label>
     <input asp-for="PhoneNumber" class="form-control mb-3" />
     <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>*@
-
+    </div>
+    <div class="form-group col-6">
+        <label asp-for="DepartmentId" class="control-label mb-2"></label>
+        <select asp-for="DepartmentId" asp-items="@Departments" class="form-control">
+            <option value="@null">Choose...</option>
+        </select>
+    </div>
     <div class="form-group col-6">
         <label asp-for="EmployeeType" class="control-label mb-2"></label>
         <select asp-for="EmployeeType" asp-items="Html.GetEnumSelectList<EmployeeType>()" class="form-control">

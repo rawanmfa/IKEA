@@ -9,7 +9,6 @@ namespace IKEA.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        // Not complete look instructor whatsapp
         private readonly IEmployeeService _employeeService;
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
@@ -23,9 +22,9 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Index
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
-            var employees = _employeeService.GetAllEmployees();
+            var employees = _employeeService.GetAllEmployees(search);
             return View(employees);
         }
         #endregion
@@ -96,7 +95,7 @@ namespace IKEA.PL.Controllers
         #region Edit
         #region Get
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id , [FromServices] IDepartmentService departmentService)
         {
             if (id is null)
             {
@@ -105,6 +104,7 @@ namespace IKEA.PL.Controllers
             var employee = _employeeService.GetEmployeeById(id.Value);
             if (employee == null)
                 return NotFound(); //404
+            ViewData["Departments"] = departmentService.GetAllDepartments();
             return View(new UpdatedEmployeeDto()
             {
                 Name=employee.Name,

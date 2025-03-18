@@ -1,4 +1,5 @@
-﻿using IKEA.BLL.Models.Departments;
+﻿using AutoMapper;
+using IKEA.BLL.Models.Departments;
 using IKEA.BLL.Services;
 using IKEA.PL.Models.Departments;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +11,22 @@ namespace IKEA.PL.Controllers
         private readonly IDepartmentService _departmentService;
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
+        private readonly IMapper _mapper;
         #region Services
-        public DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger , IWebHostEnvironment environment)
+        public DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger , IWebHostEnvironment environment , IMapper mapper)
         {
             _departmentService = departmentService;
             _logger = logger;
             _environment = environment;
+            _mapper = mapper;
         }
         #endregion
         #region Index
         [HttpGet]
         public IActionResult Index()
         {
+            //ViewData["Message"] = "Hello ViewData";
+            //ViewBag.Message= "Hello ViewBag";
             var departments = _departmentService.GetAllDepartments();
             return View(departments);
         }
@@ -37,25 +42,28 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreatedDepartmentDTO department)
+        public IActionResult Create(DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(department);
+                return View(departmentVM);
             }
             var message = string.Empty;
             try
             {
-                var result = _departmentService.CreatedDepartment(department);
+                var createdDepartment = _mapper.Map<CreatedDepartmentDTO>(departmentVM);
+                var result = _departmentService.CreatedDepartment(createdDepartment);
                 if (result > 0)
                 {
+                    //TempData["Message"] = "Department is created";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    //TempData["Message"] = "Depaartment hasn't been created";
                     message = "Sorry the Department hasn't been created";
                     ModelState.AddModelError(string.Empty, message);
-                    return View(department);
+                    return View(departmentVM);
                 }
             }
             catch (Exception ex) 
@@ -64,7 +72,7 @@ namespace IKEA.PL.Controllers
                 if (_environment.IsDevelopment())
                 {
                     message = ex.Message;
-                    return View(department);
+                    return View(departmentVM);
                 }
                 else
                 {
@@ -102,13 +110,16 @@ namespace IKEA.PL.Controllers
             var department = _departmentService.GetDepartmentById(id.Value);
             if (department == null)
                 return NotFound(); //404
-            return View(new DepartmentEditViewModel()
-            {
-                Code=department.Code,
-                Name=department.Name,
-                Description=department.Description,
-                CreationDate=department.CreationDate
-            });
+            var departmentVM = _mapper.Map<DepartmentDetailsToReturnDTO,DepartmentEditViewModel>(department);
+            return View(departmentVM); // check if instructor did that i made that
+            // Mannual mapping
+            //return View(new DepartmentEditViewModel()
+            //{
+            //    Code=department.Code,
+            //    Name=department.Name,
+            //    Description=department.Description,
+            //    CreationDate=department.CreationDate
+            //});
         }
         #endregion
         #region Post
@@ -121,14 +132,16 @@ namespace IKEA.PL.Controllers
             var message = string.Empty;
             try
             {
-                var updatedDepartment = new UpdatedDepartmentDTO()
-                {
-                    Id = id,
-                    Code = departmentVM.Code,
-                    Name = departmentVM.Name,
-                    Description = departmentVM.Description,
-                    CreationDate = departmentVM.CreationDate
-                };
+                // manual mapping
+                //var updatedDepartment = new UpdatedDepartmentDTO()
+                //{
+                //    Id = id,
+                //    Code = departmentVM.Code,
+                //    Name = departmentVM.Name,
+                //    Description = departmentVM.Description,
+                //    CreationDate = departmentVM.CreationDate
+                //};
+                var updatedDepartment = _mapper.Map<UpdatedDepartmentDTO>(departmentVM);
                 var updated = _departmentService.UpdateDepartment(updatedDepartment) > 0;
                 if (updated)
                     return RedirectToAction(nameof(Index));
