@@ -23,11 +23,11 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Index
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             //ViewData["Message"] = "Hello ViewData";
             //ViewBag.Message= "Hello ViewBag";
-            var departments = _departmentService.GetAllDepartments();
+            var departments =await _departmentService.GetAllDepartmentsAsync();
             return View(departments);
         }
         #endregion
@@ -42,7 +42,7 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(DepartmentEditViewModel departmentVM)
+        public async Task<IActionResult> Create(DepartmentEditViewModel departmentVM)
         {
             if (!ModelState.IsValid)
             {
@@ -52,7 +52,7 @@ namespace IKEA.PL.Controllers
             try
             {
                 var createdDepartment = _mapper.Map<CreatedDepartmentDTO>(departmentVM);
-                var result = _departmentService.CreatedDepartment(createdDepartment);
+                var result =await _departmentService.CreatedDepartmentAsync(createdDepartment);
                 if (result > 0)
                 {
                     //TempData["Message"] = "Department is created";
@@ -85,13 +85,13 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Details
         [HttpGet]
-        public IActionResult Details(int?id)
+        public async Task<IActionResult> Details(int?id)
         {
             if (id is null)
             {
                 return BadRequest(); //400
             }
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department =await _departmentService.GetDepartmentByIdAsync(id.Value);
             if (department == null)
                 return NotFound(); //404
             return View(department);
@@ -101,13 +101,13 @@ namespace IKEA.PL.Controllers
         #region Edit
         #region Get
         [HttpGet]
-        public IActionResult Edit(int?id)
+        public async Task<IActionResult> Edit(int?id)
         {
             if (id is null)
             {
                 return BadRequest(); //400
             }
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department =await _departmentService.GetDepartmentByIdAsync(id.Value);
             if (department == null)
                 return NotFound(); //404
             var departmentVM = _mapper.Map<DepartmentDetailsToReturnDTO,DepartmentEditViewModel>(department);
@@ -125,7 +125,7 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute]int id , DepartmentEditViewModel departmentVM) 
+        public async Task<IActionResult> Edit([FromRoute]int id , DepartmentEditViewModel departmentVM) 
         {
             if (!ModelState.IsValid)
                 return View(departmentVM);
@@ -142,7 +142,7 @@ namespace IKEA.PL.Controllers
                 //    CreationDate = departmentVM.CreationDate
                 //};
                 var updatedDepartment = _mapper.Map<UpdatedDepartmentDTO>(departmentVM);
-                var updated = _departmentService.UpdateDepartment(updatedDepartment) > 0;
+                var updated =await _departmentService.UpdateDepartmentAsync(updatedDepartment) > 0;
                 if (updated)
                     return RedirectToAction(nameof(Index));
                 message = "Sorry, An error occured while updating the department";
@@ -160,13 +160,13 @@ namespace IKEA.PL.Controllers
         #region Delete
         #region Get
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id is null)
             {
                 return BadRequest(); //400
             }
-            var department = _departmentService.GetDepartmentById(id.Value);
+            var department =await _departmentService.GetDepartmentByIdAsync(id.Value);
             if (department == null)
                 return NotFound(); //404
             return View(department);
@@ -175,12 +175,12 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var message = string.Empty;
             try
             {
-                var deleted = _departmentService.DeleteDepartment(id);
+                var deleted =await _departmentService.DeleteDepartmentAsync(id);
                 if (deleted)
                 {
                     return RedirectToAction(nameof(Index));

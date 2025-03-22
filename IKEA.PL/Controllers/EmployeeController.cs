@@ -22,9 +22,9 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Index
         [HttpGet]
-        public IActionResult Index(string search)
+        public async Task<IActionResult> Index(string search)
         {
-            var employees = _employeeService.GetAllEmployees(search);
+            var employees =await _employeeService.GetAllEmployeesAsync(search);
             return View(employees);
         }
         #endregion
@@ -39,7 +39,7 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreatedEmployeeDto employee)
+        public async Task<IActionResult> Create(CreatedEmployeeDto employee)
         {
             if (!ModelState.IsValid)
             {
@@ -48,7 +48,7 @@ namespace IKEA.PL.Controllers
             var message = string.Empty;
             try
             {
-                var result = _employeeService.CreateEmployee(employee);
+                var result =await _employeeService.CreateEmployeeAsync(employee);
                 if (result > 0)
                 {
                     return RedirectToAction(nameof(Index));
@@ -79,13 +79,13 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Details
         [HttpGet]
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id is null)
             {
                 return BadRequest(); //400
             }
-            var employee = _employeeService.GetEmployeeById(id.Value);
+            var employee =await _employeeService.GetEmployeeByIdAsync(id.Value);
             if (employee == null)
                 return NotFound(); //404
             return View(employee);
@@ -95,16 +95,16 @@ namespace IKEA.PL.Controllers
         #region Edit
         #region Get
         [HttpGet]
-        public IActionResult Edit(int? id , [FromServices] IDepartmentService departmentService)
+        public async Task<IActionResult> Edit(int? id , [FromServices] IDepartmentService departmentService)
         {
             if (id is null)
             {
                 return BadRequest(); //400
             }
-            var employee = _employeeService.GetEmployeeById(id.Value);
+            var employee =await _employeeService.GetEmployeeByIdAsync(id.Value);
             if (employee == null)
                 return NotFound(); //404
-            ViewData["Departments"] = departmentService.GetAllDepartments();
+            ViewData["Departments"] = departmentService.GetAllDepartmentsAsync();
             return View(new UpdatedEmployeeDto()
             {
                 Name=employee.Name,
@@ -123,7 +123,7 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, UpdatedEmployeeDto employee)
+        public async Task<IActionResult> Edit([FromRoute] int id, UpdatedEmployeeDto employee)
         {
             if (!ModelState.IsValid)
                 return View(employee);
@@ -144,7 +144,7 @@ namespace IKEA.PL.Controllers
                     Gender = employee.Gender,
                     HirringDate = employee.HirringDate,
                 };
-                var updated = _employeeService.UpdateEmployee(updatedEmployee) > 0;
+                var updated = await _employeeService.UpdateEmployeeAsync(updatedEmployee) > 0;
                 if (updated)
                     return RedirectToAction(nameof(Index));
                 message = "Sorry, An error occured while updating the employee";
@@ -163,12 +163,12 @@ namespace IKEA.PL.Controllers
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var message = string.Empty;
             try
             {
-                var deleted = _employeeService.DeleteEmployee(id);
+                var deleted =await _employeeService.DeleteEmployeeAsync(id);
                 if (deleted)
                 {
                     return RedirectToAction(nameof(Index));

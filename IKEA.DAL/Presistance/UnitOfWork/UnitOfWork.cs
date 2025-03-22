@@ -28,14 +28,14 @@ namespace IKEA.DAL.Presistance.UnitOfWork
         {
             _dbContext = dbContext;
         }
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _dbContext.SaveChanges();
+            return await _dbContext.SaveChangesAsync();
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            _dbContext.Dispose();
+            _dbContext.DisposeAsync();
         }
     }
 }

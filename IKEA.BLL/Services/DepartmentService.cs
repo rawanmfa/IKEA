@@ -1,7 +1,9 @@
 ﻿using IKEA.BLL.Models.Departments;
+using IKEA.BLL.Models.Employees;
 using IKEA.DAL.Models.Departments;
 using IKEA.DAL.Presistance.Repositories.Departments;
 using IKEA.DAL.Presistance.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,24 +20,22 @@ namespace IKEA.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<DepartmentToReturnDTO> GetAllDepartments() // this function different from what the instructor did if error occured or the retured data look different look MVC session4 second video at 0:30
+        public async Task<IEnumerable<DepartmentToReturnDTO>> GetAllDepartmentsAsync()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
-            foreach (var department in departments)
-            {
-                yield return new DepartmentToReturnDTO
+            return await _unitOfWork.DepartmentRepository.GetAllAsQuerable()
+                .Where(e => !e.IsDeleted)
+                .Select(department => new DepartmentToReturnDTO()
                 {
                     Id = department.Id,
                     Name = department.Name,
                     Code = department.Code,
                     CreationDate = department.CreationDate,
-                };
-            }
+                }).ToListAsync();
         }
        
-        public DepartmentDetailsToReturnDTO? GetDepartmentById(int id)
+        public async Task< DepartmentDetailsToReturnDTO?> GetDepartmentByIdAsync(int id)
         {
-            var department = _unitOfWork.DepartmentRepository.GetById(id);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id);
             if (department is not null /* you can write not null like that { }*/)
             {
                 return new DepartmentDetailsToReturnDTO
@@ -54,7 +54,7 @@ namespace IKEA.BLL.Services
             return null;
         }
 
-        public int CreatedDepartment(CreatedDepartmentDTO departmentDTO)
+        public async Task<int> CreatedDepartmentAsync(CreatedDepartmentDTO departmentDTO)
         {
             var CreatedDapartment = new Department()
             {
@@ -68,10 +68,10 @@ namespace IKEA.BLL.Services
                 // CreatedOn= DateTime.UtcNow, this will be done throught migration cause i changed it in the configuration file
             };
             _unitOfWork.DepartmentRepository.Add(CreatedDapartment);
-            return _unitOfWork.Complete();
+            return await _unitOfWork.CompleteAsync();
         }
 
-        public int UpdateDepartment(UpdatedDepartmentDTO departmentDTO)
+        public async Task<int> UpdateDepartmentAsync(UpdatedDepartmentDTO departmentDTO)
         {
             var updatedDapartment = new Department()
             {
@@ -85,16 +85,16 @@ namespace IKEA.BLL.Services
                 LastModificationOn = DateTime.UtcNow,
             };
             _unitOfWork.DepartmentRepository.Update(updatedDapartment);
-            return _unitOfWork.Complete();
+            return await _unitOfWork.CompleteAsync();
         }
-        public bool DeleteDepartment(int id)
+        public async Task<bool> DeleteDepartmentAsync(int id)
         {
-            var department = _unitOfWork.DepartmentRepository.GetById(id);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id);
             if (department is not null)
             {
                 _unitOfWork.DepartmentRepository.Delete(department);
             }
-            return _unitOfWork.Complete() > 0;
+            return await _unitOfWork.CompleteAsync() > 0;
         }
 
     }

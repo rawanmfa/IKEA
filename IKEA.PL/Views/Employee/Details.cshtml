@@ -3,12 +3,17 @@
 
 @{
     ViewData["Title"] = "Employee Details";
-    var Departments = new SelectList(departmentServices.GetAllDepartments(), nameof(DepartmentDetailsToReturnDTO.Id), nameof(DepartmentDetailsToReturnDTO.Name));
+    var Departments = new SelectList(await departmentServices.GetAllDepartmentsAsync(), nameof(DepartmentDetailsToReturnDTO.Id), nameof(DepartmentDetailsToReturnDTO.Name));
 }
 
 <h1>Employee Details</h1>
 
 <br />
+<div class="row justify-content-center align-items-center">
+    <div class="col-4">
+        <img src="~/files/images/@Model.Image" class=" img-fluid rounded-circle" />
+    </div>
+</div>
 <br />
 <!-- Bootstrap Tabs -->
 <ul class="nav nav-tabs" id="employeeTabs" role="tablist">
